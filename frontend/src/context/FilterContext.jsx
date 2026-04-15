@@ -15,8 +15,12 @@ export const FilterProvider = ({ children }) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
+  const resetFilters = () => {
+    setFilters({ categoria: 'All', region: 'All', anio: 'All' });
+  };
+
   return (
-    <FilterContext.Provider value={{ filters, updateFilter }}>
+    <FilterContext.Provider value={{ filters, updateFilter, resetFilters }}>
       {children}
     </FilterContext.Provider>
   );

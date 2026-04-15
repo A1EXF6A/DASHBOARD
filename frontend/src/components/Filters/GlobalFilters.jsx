@@ -1,9 +1,11 @@
 import React from 'react';
-import { SlidersHorizontal, Search } from 'lucide-react';
+import { SlidersHorizontal, Search, RotateCcw } from 'lucide-react';
 import { useFilters } from '../../context/FilterContext';
 
 const GlobalFilters = () => {
-  const { filters, updateFilter } = useFilters();
+  const { filters, updateFilter, resetFilters } = useFilters();
+
+  const hasActiveFilters = filters.anio !== 'All' || filters.region !== 'All' || filters.categoria !== 'All';
 
   return (
     <div className="bg-[#111111] border border-white/10 rounded-2xl p-4 mb-8 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -62,6 +64,17 @@ const GlobalFilters = () => {
           <option value="Accessories">Accessories</option>
         </select>
         
+        {/* Clear Filters Button */}
+        {hasActiveFilters && (
+          <button 
+            onClick={resetFilters}
+            className="flex items-center flex-1 sm:flex-none justify-center bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 hover:border-rose-500/40 transition-all font-medium text-sm group"
+            title="Reset filters"
+          >
+            <RotateCcw className="w-4 h-4 mr-1.5 group-hover:-rotate-90 transition-transform duration-300" />
+            Clear
+          </button>
+        )}
       </div>
     </div>
   );

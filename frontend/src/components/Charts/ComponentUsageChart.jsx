@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { getComponentsDistribution } from '../../services/api';
+import { useFilters } from '../../context/FilterContext';
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
@@ -27,18 +28,20 @@ const CustomTooltip = ({ active, payload }) => {
 const COLORS = ['#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1'];
 
 const ComponentUsageChart = () => {
+  const { filters } = useFilters();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getComponentsDistribution().then(res => {
+    setLoading(true);
+    getComponentsDistribution(filters).then(res => {
       setData(res.data);
       setLoading(false);
     }).catch(err => {
       console.error(err);
       setLoading(false);
     });
-  }, []);
+  }, [filters]);
 
   return (
     <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group">

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getSupplierLeadTimes } from '../../services/api';
+import { useFilters } from '../../context/FilterContext';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -30,18 +31,20 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const SupplierLeadTimeChart = () => {
+  const { filters } = useFilters();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getSupplierLeadTimes().then(res => {
+    setLoading(true);
+    getSupplierLeadTimes(filters).then(res => {
       setData(res.data.slice(0, 8)); // Top 8 suppliers
       setLoading(false);
     }).catch(err => {
       console.error(err);
       setLoading(false);
     });
-  }, []);
+  }, [filters]);
 
   return (
     <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group">

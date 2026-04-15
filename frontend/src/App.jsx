@@ -9,12 +9,14 @@ import LogisticsCostChart from './components/Charts/LogisticsCostChart';
 import SupplierLeadTimeChart from './components/Charts/SupplierLeadTimeChart';
 import TerritoryGrowthChart from './components/Charts/TerritoryGrowthChart';
 import ComponentUsageChart from './components/Charts/ComponentUsageChart';
+import { FilterProvider } from './context/FilterContext';
 
 function App() {
   return (
-    <DashboardLayout>
-      <GlobalFilters />
-      <KPICards />
+    <FilterProvider>
+      <DashboardLayout>
+        <GlobalFilters />
+        <KPICards />
       
       {/* Primary Financial & Operational Row */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
@@ -45,6 +47,7 @@ function App() {
          </div>
       </div>
     </DashboardLayout>
+    </FilterProvider>
   );
 }
 

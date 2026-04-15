@@ -1,8 +1,31 @@
 const { FactVentas, FactVentasCombo, FactInventario, FactFabricacion, FactDistribucion, FactAbastecimiento } = require('../models');
 
+// Helper to construct basic matches
+const buildMatch = (query) => {
+  const match = {};
+  if (query.categoria && query.categoria !== 'All') {
+    match['Producto.Categoria'] = query.categoria;
+  }
+  if (query.region && query.region !== 'All') {
+    // Not all collections have Ubicacion, applied only where possible
+    match['Ubicacion.Region'] = query.region;
+  }
+  if (query.anio && query.anio !== 'All') {
+    match['Tiempo.Anio'] = parseInt(query.anio, 10);
+  }
+  return match;
+};
+
 exports.getProfitability = async (req, res) => {
   try {
-    const data = await FactVentas.aggregate([
+    const matchProps = buildMatch(req.query);
+    // Remove region as it's not directly on FactVentas in the simplest sample model
+    delete matchProps['Ubicacion.Region'];
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+    
+    pipeline.push(
       {
         $group: {
           _id: "$Producto.ProductoKey",
@@ -16,14 +39,23 @@ exports.getProfitability = async (req, res) => {
       },
       { $sort: { margenNeto: -1 } },
       { $limit: 100 }
-    ]);
+    );
+    
+    const data = await FactVentas.aggregate(pipeline);
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
 };
 
 exports.getProductCombos = async (req, res) => {
   try {
-    const data = await FactVentasCombo.aggregate([
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    delete matchProps['Producto.Categoria']; // FactVentasCombo doesn't have Producto embedded
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+    
+    pipeline.push(
       {
         $group: {
           _id: "$ComboProducto.ComboProductoKey",
@@ -34,14 +66,22 @@ exports.getProductCombos = async (req, res) => {
       },
       { $sort: { margenNeto: -1 } },
       { $limit: 20 }
-    ]);
+    );
+    
+    const data = await FactVentasCombo.aggregate(pipeline);
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
 };
 
 exports.getInventoryMisalignment = async (req, res) => {
   try {
-    const data = await FactInventario.aggregate([
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region']; // FactInventario has Sucursal, not Ubicacion directly
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+    
+    pipeline.push(
       {
         $group: {
           _id: {
@@ -71,14 +111,22 @@ exports.getInventoryMisalignment = async (req, res) => {
       },
       { $sort: { ratioDesalineacion: -1 } },
       { $limit: 50 }
-    ]);
+    );
+    
+    const data = await FactInventario.aggregate(pipeline);
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
 };
 
 exports.getTerritoryGrowth = async (req, res) => {
   try {
-    const data = await FactVentas.aggregate([
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+    
+    pipeline.push(
       {
         $group: {
           _id: {
@@ -97,14 +145,22 @@ exports.getTerritoryGrowth = async (req, res) => {
         }
       },
       { $sort: { "_id.anio": 1, "_id.mes": 1 } }
-    ]);
+    );
+    
+    const data = await FactVentas.aggregate(pipeline);
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
 };
 
 exports.getTransportCosts = async (req, res) => {
   try {
-    const data = await FactVentas.aggregate([
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+    
+    pipeline.push(
       {
         $group: {
           _id: "$MetodoEnvio.NombreMetodoEnvio",
@@ -126,14 +182,23 @@ exports.getTransportCosts = async (req, res) => {
         }
       },
       { $sort: { ratioCostoVsIngreso: -1 } }
-    ]);
+    );
+    
+    const data = await FactVentas.aggregate(pipeline);
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
 };
 
 exports.getSupplierLeadTimes = async (req, res) => {
   try {
-    const data = await FactAbastecimiento.aggregate([
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    // Tiempo.Anio may not apply if dataset uses TiempoEntregaDias exclusively without standard Tiempo embedding, but we'll apply it just in case.
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+    
+    pipeline.push(
       {
         $group: {
           _id: "$Proveedor.NombreProveedor",
@@ -144,14 +209,22 @@ exports.getSupplierLeadTimes = async (req, res) => {
       },
       { $sort: { tiempoEntregaPromedio: -1 } },
       { $limit: 20 }
-    ]);
+    );
+    
+    const data = await FactAbastecimiento.aggregate(pipeline);
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
 };
 
 exports.getComponentsDistribution = async (req, res) => {
   try {
-    const data = await FactFabricacion.aggregate([
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+    
+    pipeline.push(
       {
         $group: {
           _id: "$Producto.Categoria",
@@ -173,7 +246,8 @@ exports.getComponentsDistribution = async (req, res) => {
         }
       },
       { $sort: { totalComponentes: -1 } }
-    ]);
+    );
+    const data = await FactFabricacion.aggregate(pipeline);
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
 };

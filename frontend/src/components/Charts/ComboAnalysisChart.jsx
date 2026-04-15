@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis, Cell } from 'recharts';
 import { getProductCombos } from '../../services/api';
+import { useFilters } from '../../context/FilterContext';
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
@@ -29,18 +30,20 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 const ComboAnalysisChart = () => {
+  const { filters } = useFilters();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getProductCombos().then(res => {
+    setLoading(true);
+    getProductCombos(filters).then(res => {
       setData(res.data);
       setLoading(false);
     }).catch(err => {
       console.error(err);
       setLoading(false);
     });
-  }, []);
+  }, [filters]);
 
   return (
     <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group">

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { getTransportCosts } from '../../services/api';
+import { useFilters } from '../../context/FilterContext';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -29,18 +30,20 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const LogisticsCostChart = () => {
+  const { filters } = useFilters();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getTransportCosts().then(res => {
+    setLoading(true);
+    getTransportCosts(filters).then(res => {
       setData(res.data);
       setLoading(false);
     }).catch(err => {
       console.error(err);
       setLoading(false);
     });
-  }, []);
+  }, [filters]);
 
   return (
     <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group">

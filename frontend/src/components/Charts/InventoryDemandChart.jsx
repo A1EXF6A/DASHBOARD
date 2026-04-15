@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ComposedChart, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getInventoryMisalignment } from '../../services/api';
+import { useFilters } from '../../context/FilterContext';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -30,11 +31,13 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const InventoryDemandChart = () => {
+  const { filters } = useFilters();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getInventoryMisalignment().then(res => {
+    setLoading(true);
+    getInventoryMisalignment(filters).then(res => {
       const transformed = res.data.slice(0, 10).map(d => ({
         name: d.nombreProducto.substring(0, 15) + (d.nombreProducto.length > 15 ? '...' : ''),
         stock: d.stockPromedio,
@@ -46,7 +49,7 @@ const InventoryDemandChart = () => {
       console.error(err);
       setLoading(false);
     });
-  }, []);
+  }, [filters]);
 
   return (
     <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group">

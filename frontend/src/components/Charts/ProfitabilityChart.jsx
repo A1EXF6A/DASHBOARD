@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { getProfitability } from '../../services/api';
+import { useFilters } from '../../context/FilterContext';
 
 // Custom Tooltip for better SaaS UI design
 const CustomTooltip = ({ active, payload, label }) => {
@@ -19,11 +20,13 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const ProfitabilityChart = () => {
+  const { filters } = useFilters();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getProfitability().then(res => {
+    setLoading(true);
+    getProfitability(filters).then(res => {
       const transformed = res.data.slice(0, 8).map(d => ({
         name: d.nombre.substring(0, 20) + (d.nombre.length > 20 ? '...' : ''),
         margin: d.margenNeto,
@@ -35,7 +38,7 @@ const ProfitabilityChart = () => {
       console.error(err);
       setLoading(false);
     });
-  }, []);
+  }, [filters]);
 
   return (
     <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group">

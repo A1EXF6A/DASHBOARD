@@ -1,7 +1,10 @@
 import React from 'react';
-import { Calendar, SlidersHorizontal, MapPin, Tag, Search } from 'lucide-react';
+import { SlidersHorizontal, Search } from 'lucide-react';
+import { useFilters } from '../../context/FilterContext';
 
 const GlobalFilters = () => {
+  const { filters, updateFilter } = useFilters();
+
   return (
     <div className="bg-[#111111] border border-white/10 rounded-2xl p-4 mb-8 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
       <div className="flex items-center gap-2">
@@ -21,20 +24,44 @@ const GlobalFilters = () => {
           Filters
         </div>
         
-        <button className="flex items-center flex-1 sm:flex-none justify-center bg-[#0A0A0A] border border-white/10 rounded-lg px-3.5 py-2 hover:border-white/30 hover:bg-white/5 transition-all group">
-          <Calendar className="w-4 h-4 mr-2 text-slate-400 group-hover:text-white transition-colors" />
-          <span className="text-sm font-medium text-slate-300">Last 30 Days</span>
-        </button>
+        {/* Year Filter */}
+        <select 
+          className="flex-1 sm:flex-none bg-[#0A0A0A] border border-white/10 rounded-lg px-3.5 py-2 text-sm font-medium text-slate-300 focus:outline-none focus:border-cyan-500 hover:border-white/30 transition-all cursor-pointer appearance-none"
+          value={filters.anio}
+          onChange={(e) => updateFilter('anio', e.target.value)}
+        >
+          <option value="All">All Time</option>
+          <option value="2011">2011</option>
+          <option value="2012">2012</option>
+          <option value="2013">2013</option>
+          <option value="2014">2014</option>
+        </select>
 
-        <button className="flex items-center flex-1 sm:flex-none justify-center bg-[#0A0A0A] border border-white/10 rounded-lg px-3.5 py-2 hover:border-white/30 hover:bg-white/5 transition-all group">
-          <MapPin className="w-4 h-4 mr-2 text-slate-400 group-hover:text-white transition-colors" />
-          <span className="text-sm font-medium text-slate-300">All Regions</span>
-        </button>
+        {/* Region Filter */}
+        <select 
+          className="flex-1 sm:flex-none bg-[#0A0A0A] border border-white/10 rounded-lg px-3.5 py-2 text-sm font-medium text-slate-300 focus:outline-none focus:border-cyan-500 hover:border-white/30 transition-all cursor-pointer appearance-none"
+          value={filters.region}
+          onChange={(e) => updateFilter('region', e.target.value)}
+        >
+          <option value="All">All Regions</option>
+          <option value="North America">North America</option>
+          <option value="Europe">Europe</option>
+          <option value="Pacific">Pacific</option>
+        </select>
 
-        <button className="flex items-center flex-1 sm:flex-none justify-center bg-[#0A0A0A] border border-white/10 rounded-lg px-3.5 py-2 hover:border-white/30 hover:bg-white/5 transition-all group">
-          <Tag className="w-4 h-4 mr-2 text-slate-400 group-hover:text-white transition-colors" />
-          <span className="text-sm font-medium text-slate-300">All Categories</span>
-        </button>
+        {/* Category Filter */}
+        <select 
+          className="flex-1 sm:flex-none bg-[#0A0A0A] border border-white/10 rounded-lg px-3.5 py-2 text-sm font-medium text-slate-300 focus:outline-none focus:border-cyan-500 hover:border-white/30 transition-all cursor-pointer appearance-none"
+          value={filters.categoria}
+          onChange={(e) => updateFilter('categoria', e.target.value)}
+        >
+          <option value="All">All Categories</option>
+          <option value="Bikes">Bikes</option>
+          <option value="Components">Components</option>
+          <option value="Clothing">Clothing</option>
+          <option value="Accessories">Accessories</option>
+        </select>
+        
       </div>
     </div>
   );

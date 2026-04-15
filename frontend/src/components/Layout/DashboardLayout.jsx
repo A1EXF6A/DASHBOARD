@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Activity, LayoutDashboard, TrendingUp, Box, Map, Truck, Users, Menu, X, Bell, ChevronDown } from 'lucide-react';
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = ({ children, activeTab, setActiveTab }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const navItems = [
-    { name: 'Overview', icon: LayoutDashboard, active: true },
+    { name: 'Overview', icon: LayoutDashboard },
     { name: 'Products & Profit', icon: TrendingUp },
     { name: 'Inventory', icon: Box },
     { name: 'Territories', icon: Map },
@@ -36,13 +36,14 @@ const DashboardLayout = ({ children }) => {
                 <li key={index}>
                   <a 
                     href="#" 
+                    onClick={(e) => { e.preventDefault(); setActiveTab(item.name); }}
                     className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group ${
-                      item.active 
-                        ? 'bg-white/10 text-white' 
+                      activeTab === item.name 
+                        ? 'bg-white/10 text-white shadow-[inset_2px_0_0_0_#22d3ee]' 
                         : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
                     }`}
                   >
-                    <item.icon className={`w-5 h-5 shrink-0 ${item.active ? 'text-cyan-400' : 'text-slate-400 group-hover:text-slate-300'}`} />
+                    <item.icon className={`w-5 h-5 shrink-0 ${activeTab === item.name ? 'text-cyan-400' : 'text-slate-400 group-hover:text-slate-300'}`} />
                     {sidebarOpen && <span className="font-medium ml-3 text-sm">{item.name}</span>}
                   </a>
                 </li>
@@ -80,7 +81,7 @@ const DashboardLayout = ({ children }) => {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h2 className="text-lg font-semibold text-white tracking-tight">Executive Dashboard</h2>
+            <h2 className="text-lg font-semibold text-white tracking-tight">{activeTab} Dashboard</h2>
           </div>
 
           <div className="flex items-center space-x-5">

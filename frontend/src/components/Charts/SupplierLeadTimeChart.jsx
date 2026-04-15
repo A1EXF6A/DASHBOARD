@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getSupplierLeadTimes } from '../../services/api';
 import { useFilters } from '../../context/FilterContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 const CustomTooltip = ({ active, payload, label }) => {
+  const { t } = useLanguage();
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#1A1A1A] border border-white/10 p-3 rounded-xl shadow-2xl backdrop-blur-xl">
@@ -12,16 +14,16 @@ const CustomTooltip = ({ active, payload, label }) => {
            <div className="flex items-center justify-between gap-6">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
-              <span className="text-slate-400 text-xs">Total Spend</span>
+              <span className="text-slate-400 text-xs">{t('sup_spend')}</span>
             </div>
             <span className="text-white text-sm font-bold">${payload[0]?.value?.toLocaleString()}</span>
           </div>
           <div className="flex items-center justify-between gap-6">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-rose-500"></div>
-              <span className="text-slate-400 text-xs">Lead Time Avg</span>
+              <span className="text-slate-400 text-xs">{t('sup_lead')}</span>
             </div>
-            <span className="text-rose-400 text-sm font-bold">{payload[1]?.value?.toFixed(1)} days</span>
+            <span className="text-rose-400 text-sm font-bold">{payload[1]?.value?.toFixed(1)} {t('days')}</span>
           </div>
         </div>
       </div>
@@ -32,6 +34,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const SupplierLeadTimeChart = () => {
   const { filters } = useFilters();
+  const { t } = useLanguage();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,19 +50,19 @@ const SupplierLeadTimeChart = () => {
   }, [filters]);
 
   return (
-    <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group">
+    <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group h-full">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-base font-semibold text-white tracking-tight">Supplier Performance</h3>
-          <p className="text-xs text-slate-500 mt-1">Lead Time vs Total Spend</p>
+          <h3 className="text-base font-semibold text-white tracking-tight">{t('sup_title')}</h3>
+          <p className="text-xs text-slate-500 mt-1">{t('sup_subtitle')}</p>
         </div>
       </div>
       
-      <div className="h-80 w-full">
+      <div className="h-72 w-full">
         {loading ? (
           <div className="w-full h-full flex flex-col items-center justify-center">
             <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-cyan-500 animate-spin mb-3"></div>
-            <p className="text-sm text-slate-500">Loading suppliers...</p>
+            <p className="text-sm text-slate-500">{t('loading')}</p>
           </div>
         ) : (
            <ResponsiveContainer width="100%" height="100%">
@@ -80,8 +83,8 @@ const SupplierLeadTimeChart = () => {
                <YAxis yAxisId="right" orientation="right" stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} />
                <Tooltip content={<CustomTooltip />} cursor={{ fill: '#ffffff', opacity: 0.02 }} />
                <Legend wrapperStyle={{ paddingTop: '15px', fontSize: '11px' }} />
-               <Bar yAxisId="left" dataKey="costoTotal" name="Total Spend" fill="#06b6d4" fillOpacity={0.7} radius={[4, 4, 0, 0]} maxBarSize={30} />
-               <Line yAxisId="right" type="monotone" dataKey="tiempoEntregaPromedio" name="Avg Lead Time (Days)" stroke="#f43f5e" strokeWidth={3} dot={{ r: 4, fill: '#f43f5e', strokeWidth: 2 }} />
+               <Bar yAxisId="left" dataKey="costoTotal" name={t('sup_spend')} fill="#06b6d4" fillOpacity={0.7} radius={[4, 4, 0, 0]} maxBarSize={30} />
+               <Line yAxisId="right" type="monotone" dataKey="tiempoEntregaPromedio" name={t('sup_lead')} stroke="#f43f5e" strokeWidth={3} dot={{ r: 4, fill: '#f43f5e', strokeWidth: 2 }} />
             </ComposedChart>
           </ResponsiveContainer>
         )}

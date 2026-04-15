@@ -10,6 +10,7 @@ import SupplierLeadTimeChart from './components/Charts/SupplierLeadTimeChart';
 import TerritoryGrowthChart from './components/Charts/TerritoryGrowthChart';
 import ComponentUsageChart from './components/Charts/ComponentUsageChart';
 import { FilterProvider } from './context/FilterContext';
+import { LanguageProvider } from './context/LanguageContext';
 
 function App() {
   const [activeTab, setActiveTab] = useState('Overview');
@@ -85,9 +86,10 @@ function App() {
   };
 
   return (
-    <FilterProvider>
-      <DashboardLayout activeTab={activeTab} setActiveTab={setActiveTab}>
-        <GlobalFilters />
+    <LanguageProvider>
+      <FilterProvider>
+        <DashboardLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+          <GlobalFilters />
         
         {/* Render KPICards only in Overview, or we can choose to leave them globally */}
         {activeTab === 'Overview' && <KPICards />}
@@ -95,9 +97,10 @@ function App() {
         {/* Render Dynamic Views based on active Sidebar Item */}
         <div className="transition-all duration-300">
            {renderView()}
-        </div>
-      </DashboardLayout>
-    </FilterProvider>
+          </div>
+        </DashboardLayout>
+      </FilterProvider>
+    </LanguageProvider>
   );
 }
 

@@ -1,41 +1,43 @@
 import React from 'react';
 import { DollarSign, Percent, TrendingUp, Package, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const KPICards = () => {
+  const { t } = useLanguage();
   const kpis = [
     { 
-      title: 'Total Revenue', 
+      title: t('kpi_revenue'), 
       value: '$2.4M', 
       trend: '+12.5%', 
       isPositive: true,
-      timeframe: 'vs last month', 
+      timeframe: t('vs_last_month'), 
       icon: DollarSign, 
       chart: 'text-emerald-400' 
     },
     { 
-      title: 'Avg Profit Margin', 
+      title: t('kpi_profit_margin'), 
       value: '32.4%', 
       trend: '+2.1%', 
       isPositive: true,
-      timeframe: 'vs last month', 
+      timeframe: t('vs_last_month'), 
       icon: Percent, 
       chart: 'text-cyan-400' 
     },
     { 
-      title: 'Inventory Turnover', 
+      title: t('kpi_inventory_turnover'), 
       value: '4.8x', 
       trend: '-0.3x', 
       isPositive: false,
-      timeframe: 'vs last month', 
+      timeframe: t('vs_last_month'), 
       icon: Package, 
       chart: 'text-amber-400' 
     },
     { 
-      title: 'Sales Growth', 
+      title: t('kpi_sales_growth'), 
       value: '+15.2%', 
       trend: '+4.2%', 
       isPositive: true,
-      timeframe: 'vs last year', 
+      timeframe: t('vs_last_year'), 
       icon: TrendingUp, 
       chart: 'text-violet-400' 
     },

@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Activity, LayoutDashboard, TrendingUp, Box, Map, Truck, Users, Menu, X, Bell, ChevronDown } from 'lucide-react';
+import { Activity, LayoutDashboard, TrendingUp, Box, Map, Truck, Users, Menu, Globe, Bell, ChevronDown } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const DashboardLayout = ({ children, activeTab, setActiveTab }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { t, language, toggleLanguage } = useLanguage();
 
   const navItems = [
-    { name: 'Overview', icon: LayoutDashboard },
-    { name: 'Products & Profit', icon: TrendingUp },
-    { name: 'Inventory', icon: Box },
-    { name: 'Territories', icon: Map },
-    { name: 'Logistics', icon: Truck },
-    { name: 'Suppliers', icon: Users },
+    { name: 'Overview', label: t('nav_overview'), icon: LayoutDashboard },
+    { name: 'Products & Profit', label: t('nav_products_profit'), icon: TrendingUp },
+    { name: 'Inventory', label: t('nav_inventory'), icon: Box },
+    { name: 'Territories', label: t('nav_territories'), icon: Map },
+    { name: 'Logistics', label: t('nav_logistics'), icon: Truck },
+    { name: 'Suppliers', label: t('nav_suppliers'), icon: Users },
   ];
 
   return (
@@ -30,7 +32,7 @@ const DashboardLayout = ({ children, activeTab, setActiveTab }) => {
 
         <nav className="flex-1 overflow-y-auto py-6 px-3 custom-scrollbar">
           <div className="mb-4">
-            {sidebarOpen && <p className="text-xs font-medium text-slate-500 px-3 uppercase tracking-wider mb-2">Menu</p>}
+            {sidebarOpen && <p className="text-xs font-medium text-slate-500 px-3 uppercase tracking-wider mb-2">{t('menu_title')}</p>}
             <ul className="space-y-1.5">
               {navItems.map((item, index) => (
                 <li key={index}>
@@ -44,7 +46,7 @@ const DashboardLayout = ({ children, activeTab, setActiveTab }) => {
                     }`}
                   >
                     <item.icon className={`w-5 h-5 shrink-0 ${activeTab === item.name ? 'text-cyan-400' : 'text-slate-400 group-hover:text-slate-300'}`} />
-                    {sidebarOpen && <span className="font-medium ml-3 text-sm">{item.name}</span>}
+                    {sidebarOpen && <span className="font-medium ml-3 text-sm">{item.label}</span>}
                   </a>
                 </li>
               ))}
@@ -57,9 +59,9 @@ const DashboardLayout = ({ children, activeTab, setActiveTab }) => {
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm shrink-0">
               JS
             </div>
-            {sidebarOpen && (
+             {sidebarOpen && (
                <div className="ml-3 overflow-hidden">
-                 <p className="text-sm font-medium text-white truncate">Admin User</p>
+                 <p className="text-sm font-medium text-white truncate">{t('admin_user')}</p>
                  <p className="text-xs text-slate-500 truncate">admin@bikes.com</p>
                </div>
             )}
@@ -81,13 +83,23 @@ const DashboardLayout = ({ children, activeTab, setActiveTab }) => {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h2 className="text-lg font-semibold text-white tracking-tight">{activeTab} Dashboard</h2>
+            <h2 className="text-lg font-semibold text-white tracking-tight">
+               {activeTab === 'Overview' ? t('executive_dashboard') : navItems.find(i => i.name === activeTab)?.label}
+            </h2>
           </div>
 
           <div className="flex items-center space-x-5">
+             <button 
+                onClick={toggleLanguage}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 bg-white/5 border border-white/10 hover:bg-white/10 transition-all uppercase"
+             >
+                <Globe className="w-4 h-4 text-cyan-400" />
+                {language}
+             </button>
+
              <div className="hidden md:flex items-center px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-2 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
-              <span className="text-xs font-medium text-emerald-400">System Live</span>
+              <span className="text-xs font-medium text-emerald-400">{t('system_live')}</span>
             </div>
             
             <button className="relative p-1.5 text-slate-400 hover:text-white transition-colors">

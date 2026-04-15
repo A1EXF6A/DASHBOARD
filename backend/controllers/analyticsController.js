@@ -59,13 +59,51 @@ exports.getProductCombos = async (req, res) => {
       {
         $group: {
           _id: "$ComboProducto.ComboProductoKey",
+          productoKey1: { $first: "$ComboProducto.ProductoKey1" },
+          productoKey2: { $first: "$ComboProducto.ProductoKey2" },
           ingresoTotal: { $sum: "$IngresoTotal" },
           margenNeto: { $sum: "$MargenNeto" },
           cantidadVendida: { $sum: { $add: ["$CantidadProducto1", "$CantidadProducto2"] } }
         }
       },
       { $sort: { margenNeto: -1 } },
-      { $limit: 20 }
+      { $limit: 20 },
+      {
+        $lookup: {
+          from: "FactVentas",
+          let: { key1: "$productoKey1" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$Producto.ProductoKey", "$$key1"] } } },
+            { $limit: 1 },
+            { $project: { _id: 0, "Producto.NombreProducto": 1 } }
+          ],
+          as: "p1Data"
+        }
+      },
+      {
+        $lookup: {
+          from: "FactVentas",
+          let: { key2: "$productoKey2" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$Producto.ProductoKey", "$$key2"] } } },
+            { $limit: 1 },
+            { $project: { _id: 0, "Producto.NombreProducto": 1 } }
+          ],
+          as: "p2Data"
+        }
+      },
+      {
+        $addFields: {
+          nombreProducto1: { $arrayElemAt: ["$p1Data.Producto.NombreProducto", 0] },
+          nombreProducto2: { $arrayElemAt: ["$p2Data.Producto.NombreProducto", 0] }
+        }
+      },
+      {
+         $project: {
+             p1Data: 0,
+             p2Data: 0
+         }
+      }
     );
     
     const data = await FactVentasCombo.aggregate(pipeline);

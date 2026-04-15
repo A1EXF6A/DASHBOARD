@@ -2,16 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { getProfitability } from '../../services/api';
 import { useFilters } from '../../context/FilterContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 // Custom Tooltip for better SaaS UI design
 const CustomTooltip = ({ active, payload, label }) => {
+  const { t } = useLanguage();
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#1A1A1A] border border-white/10 p-3 rounded-xl shadow-2xl backdrop-blur-xl">
         <p className="text-slate-300 text-xs font-semibold mb-2">{label}</p>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-cyan-400"></div>
-          <p className="text-white text-sm font-bold">${(payload[0].value).toLocaleString()}</p>
+          <span className="text-slate-400 text-xs">{t('prof_margin')}:</span>
+          <span className="text-white text-sm font-bold">${payload[0].value.toLocaleString()}</span>
         </div>
       </div>
     );
@@ -21,6 +24,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const ProfitabilityChart = () => {
   const { filters } = useFilters();
+  const { t } = useLanguage();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,22 +45,22 @@ const ProfitabilityChart = () => {
   }, [filters]);
 
   return (
-    <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group">
+    <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group h-full">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-base font-semibold text-white tracking-tight">Top Products Profitability</h3>
-          <p className="text-xs text-slate-500 mt-1">Net Margin ranked by product</p>
+          <h3 className="text-base font-semibold text-white tracking-tight">{t('prof_title')}</h3>
+          <p className="text-xs text-slate-500 mt-1">{t('prof_subtitle')}</p>
         </div>
-        <button className="text-xs font-medium text-slate-400 px-3 py-1.5 rounded-lg border border-white/5 hover:bg-white/5 hover:text-white transition-all">
-          View Report
+        <button className="text-xs font-medium text-cyan-400 bg-cyan-400/10 px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+          {t('btn_report')}
         </button>
       </div>
       
-      <div className="h-80 w-full">
+      <div className="h-72 w-full">
         {loading ? (
           <div className="w-full h-full flex flex-col items-center justify-center">
             <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-cyan-500 animate-spin mb-3"></div>
-            <p className="text-sm text-slate-500">Loading metrics...</p>
+            <p className="text-sm text-slate-500">{t('loading')}</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">

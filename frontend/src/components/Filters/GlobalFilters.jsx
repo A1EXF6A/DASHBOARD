@@ -1,9 +1,11 @@
 import React from 'react';
 import { SlidersHorizontal, Search, RotateCcw } from 'lucide-react';
 import { useFilters } from '../../context/FilterContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 const GlobalFilters = () => {
   const { filters, updateFilter, resetFilters } = useFilters();
+  const { t } = useLanguage();
 
   const hasActiveFilters = filters.anio !== 'All' || filters.region !== 'All' || filters.categoria !== 'All';
 
@@ -14,7 +16,7 @@ const GlobalFilters = () => {
           <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
           <input 
             type="text" 
-            placeholder="Search metric or dimension..." 
+            placeholder={t('search_placeholder')}
             className="bg-[#0A0A0A] border border-white/10 text-white text-sm rounded-lg pl-9 pr-4 py-2 w-full lg:w-80 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-600"
           />
         </div>
@@ -23,7 +25,7 @@ const GlobalFilters = () => {
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center text-slate-400 font-medium text-sm mr-2 hidden xl:flex">
           <SlidersHorizontal className="w-3.5 h-3.5 mr-2" />
-          Filters
+          {t('filters_title')}
         </div>
         
         {/* Year Filter */}
@@ -32,7 +34,7 @@ const GlobalFilters = () => {
           value={filters.anio}
           onChange={(e) => updateFilter('anio', e.target.value)}
         >
-          <option value="All">All Time</option>
+          <option value="All">{t('all_time')}</option>
           <option value="2011">2011</option>
           <option value="2012">2012</option>
           <option value="2013">2013</option>
@@ -45,10 +47,10 @@ const GlobalFilters = () => {
           value={filters.region}
           onChange={(e) => updateFilter('region', e.target.value)}
         >
-          <option value="All">All Regions</option>
-          <option value="North America">North America</option>
-          <option value="Europe">Europe</option>
-          <option value="Pacific">Pacific</option>
+          <option value="All">{t('all_regions')}</option>
+          <option value="North America">{t('north_america')}</option>
+          <option value="Europe">{t('europe')}</option>
+          <option value="Pacific">{t('pacific')}</option>
         </select>
 
         {/* Category Filter */}
@@ -57,11 +59,11 @@ const GlobalFilters = () => {
           value={filters.categoria}
           onChange={(e) => updateFilter('categoria', e.target.value)}
         >
-          <option value="All">All Categories</option>
-          <option value="Bikes">Bikes</option>
-          <option value="Components">Components</option>
-          <option value="Clothing">Clothing</option>
-          <option value="Accessories">Accessories</option>
+          <option value="All">{t('all_categories')}</option>
+          <option value="Bikes">{t('bikes')}</option>
+          <option value="Components">{t('components')}</option>
+          <option value="Clothing">{t('clothing')}</option>
+          <option value="Accessories">{t('accessories')}</option>
         </select>
         
         {/* Clear Filters Button */}
@@ -72,7 +74,7 @@ const GlobalFilters = () => {
             title="Reset filters"
           >
             <RotateCcw className="w-4 h-4 mr-1.5 group-hover:-rotate-90 transition-transform duration-300" />
-            Clear
+            {t('clear_btn')}
           </button>
         )}
       </div>

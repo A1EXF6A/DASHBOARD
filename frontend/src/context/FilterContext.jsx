@@ -8,7 +8,9 @@ export const FilterProvider = ({ children }) => {
   const [filters, setFilters] = useState({
     categoria: 'All',
     region: 'All',
-    anio: 'All'
+    anio: 'All',
+    mes: 'All',
+    canal: 'All'
   });
 
   const updateFilter = (key, value) => {
@@ -16,7 +18,7 @@ export const FilterProvider = ({ children }) => {
   };
 
   const resetFilters = () => {
-    setFilters({ categoria: 'All', region: 'All', anio: 'All' });
+    setFilters({ categoria: 'All', region: 'All', anio: 'All', mes: 'All', canal: 'All' });
   };
 
   return (

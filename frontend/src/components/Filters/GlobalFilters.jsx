@@ -1,5 +1,5 @@
 import React from 'react';
-import { SlidersHorizontal, Search, RotateCcw } from 'lucide-react';
+import { SlidersHorizontal, RotateCcw } from 'lucide-react';
 import { useFilters } from '../../context/FilterContext';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -7,21 +7,10 @@ const GlobalFilters = () => {
   const { filters, updateFilter, resetFilters } = useFilters();
   const { t } = useLanguage();
 
-  const hasActiveFilters = filters.anio !== 'All' || filters.region !== 'All' || filters.categoria !== 'All';
+  const hasActiveFilters = filters.anio !== 'All' || filters.region !== 'All' || filters.categoria !== 'All' || filters.mes !== 'All' || filters.canal !== 'All';
 
   return (
-    <div className="bg-[#111111] border border-white/10 rounded-2xl p-4 mb-8 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-      <div className="flex items-center gap-2">
-        <div className="relative w-full lg:w-auto">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input 
-            type="text" 
-            placeholder={t('search_placeholder')}
-            className="bg-[#0A0A0A] border border-white/10 text-white text-sm rounded-lg pl-9 pr-4 py-2 w-full lg:w-80 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-600"
-          />
-        </div>
-      </div>
-      
+    <div className="bg-[#111111] border border-white/10 rounded-2xl p-4 mb-8 shadow-sm flex flex-col lg:flex-row lg:items-center justify-end gap-4">
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center text-slate-400 font-medium text-sm mr-2 hidden xl:flex">
           <SlidersHorizontal className="w-3.5 h-3.5 mr-2" />
@@ -39,6 +28,39 @@ const GlobalFilters = () => {
           <option value="2012">2012</option>
           <option value="2013">2013</option>
           <option value="2014">2014</option>
+        </select>
+
+        {/* Month Filter */}
+        <select 
+          className="flex-1 sm:flex-none bg-[#0A0A0A] border border-white/10 rounded-lg px-3.5 py-2 text-sm font-medium text-slate-300 focus:outline-none focus:border-cyan-500 hover:border-white/30 transition-all cursor-pointer appearance-none"
+          value={filters.mes}
+          onChange={(e) => updateFilter('mes', e.target.value)}
+        >
+          <option value="All">{t('all_months')}</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+        </select>
+
+        {/* Channel Filter */}
+        <select 
+          className="flex-1 sm:flex-none bg-[#0A0A0A] border border-white/10 rounded-lg px-3.5 py-2 text-sm font-medium text-slate-300 focus:outline-none focus:border-cyan-500 hover:border-white/30 transition-all cursor-pointer appearance-none"
+          value={filters.canal}
+          onChange={(e) => updateFilter('canal', e.target.value)}
+        >
+          <option value="All">{t('all_channels')}</option>
+          <option value="Online">{t('online')}</option>
+          <option value="Tienda">{t('retail')}</option>
+          <option value="Distribuidor">{t('wholesale')}</option>
         </select>
 
         {/* Region Filter */}

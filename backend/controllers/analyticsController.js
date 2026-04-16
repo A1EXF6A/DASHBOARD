@@ -13,6 +13,12 @@ const buildMatch = (query) => {
   if (query.anio && query.anio !== 'All') {
     match['Tiempo.Anio'] = parseInt(query.anio, 10);
   }
+  if (query.mes && query.mes !== 'All') {
+    match['Tiempo.Mes'] = parseInt(query.mes, 10);
+  }
+  if (query.canal && query.canal !== 'All') {
+    match['Canal.TipoCanal'] = query.canal;
+  }
   return match;
 };
 
@@ -115,6 +121,7 @@ exports.getInventoryMisalignment = async (req, res) => {
   try {
     const matchProps = buildMatch(req.query);
     delete matchProps['Ubicacion.Region']; // FactInventario has Sucursal, not Ubicacion directly
+    delete matchProps['Canal.TipoCanal'];
     
     const pipeline = [];
     if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
@@ -316,6 +323,8 @@ exports.getSupplierLeadTimes = async (req, res) => {
   try {
     const matchProps = buildMatch(req.query);
     delete matchProps['Ubicacion.Region'];
+    delete matchProps['Canal.TipoCanal'];
+    delete matchProps['Tiempo.Mes'];
     // Tiempo.Anio may not apply if dataset uses TiempoEntregaDias exclusively without standard Tiempo embedding, but we'll apply it just in case.
     
     const pipeline = [];
@@ -343,6 +352,7 @@ exports.getComponentsDistribution = async (req, res) => {
   try {
     const matchProps = buildMatch(req.query);
     delete matchProps['Ubicacion.Region'];
+    delete matchProps['Canal.TipoCanal'];
     
     const pipeline = [];
     if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
@@ -463,6 +473,8 @@ exports.getSupplierCostVsLeadTime = async (req, res) => {
   try {
     const matchProps = buildMatch(req.query);
     delete matchProps['Ubicacion.Region'];
+    delete matchProps['Canal.TipoCanal'];
+    delete matchProps['Tiempo.Mes'];
     
     const pipeline = [];
     if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
@@ -490,6 +502,7 @@ exports.getInventoryTrend = async (req, res) => {
   try {
     const matchProps = buildMatch(req.query);
     delete matchProps['Ubicacion.Region'];
+    delete matchProps['Canal.TipoCanal'];
     
     const pipeline = [];
     if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
@@ -534,6 +547,7 @@ exports.getStockVsSalesMatrix = async (req, res) => {
   try {
     const matchProps = buildMatch(req.query);
     delete matchProps['Ubicacion.Region'];
+    delete matchProps['Canal.TipoCanal'];
     
     const pipeline = [];
     if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });

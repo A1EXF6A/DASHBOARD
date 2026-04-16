@@ -13,7 +13,8 @@ const {
   getSupplierCostVsLeadTime,
   getTerritoryMatrix,
   getInventoryTrend,
-  getStockVsSalesMatrix
+  getStockVsSalesMatrix,
+  getOverallKPIs
 } = require('../controllers/analyticsController');
 
 router.get('/rentabilidad-producto', getProfitability);
@@ -31,5 +32,6 @@ router.get('/supplier-cost-vs-leadtime', getSupplierCostVsLeadTime);
 router.get('/territory-matrix', getTerritoryMatrix);
 router.get('/inventory-trend', getInventoryTrend);
 router.get('/stock-vs-sales-matrix', getStockVsSalesMatrix);
+router.get('/overall-kpis', getOverallKPIs);
 
 module.exports = router;

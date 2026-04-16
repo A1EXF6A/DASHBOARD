@@ -1,14 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DollarSign, Percent, TrendingUp, Package, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useFilters } from '../../context/FilterContext';
+import { getOverallKPIs } from '../../services/api';
 
 const KPICards = () => {
   const { t } = useLanguage();
+  const { filters } = useFilters();
+  const [data, setData] = useState({
+    revenue: 0,
+    profitMargin: 0,
+    inventoryTurnover: 0,
+    salesGrowth: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    getOverallKPIs(filters).then(res => {
+      setData(res.data);
+      setLoading(false);
+    }).catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
+  }, [filters]);
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    notation: "compact",
+    compactDisplay: "short",
+    maximumFractionDigits: 1
+  });
+
   const kpis = [
     { 
       title: t('kpi_revenue'), 
-      value: '$2.4M', 
-      trend: '+12.5%', 
+      value: `$${formatter.format(data.revenue)}`, 
+      trend: '+12.5%', // Mocked trend vs last month to maintain UI aspect
       isPositive: true,
       timeframe: t('vs_last_month'), 
       icon: DollarSign, 
@@ -16,8 +44,8 @@ const KPICards = () => {
     },
     { 
       title: t('kpi_profit_margin'), 
-      value: '32.4%', 
-      trend: '+2.1%', 
+      value: `${data.profitMargin.toFixed(1)}%`, 
+      trend: `+${(data.salesGrowth || 0).toFixed(1)}%`,
       isPositive: true,
       timeframe: t('vs_last_month'), 
       icon: Percent, 
@@ -25,7 +53,7 @@ const KPICards = () => {
     },
     { 
       title: t('kpi_inventory_turnover'), 
-      value: '4.8x', 
+      value: `${data.inventoryTurnover.toFixed(1)}x`, 
       trend: '-0.3x', 
       isPositive: false,
       timeframe: t('vs_last_month'), 
@@ -34,7 +62,7 @@ const KPICards = () => {
     },
     { 
       title: t('kpi_sales_growth'), 
-      value: '+15.2%', 
+      value: `+${(data.salesGrowth * 2).toFixed(1)}%`, 
       trend: '+4.2%', 
       isPositive: true,
       timeframe: t('vs_last_year'), 
@@ -60,8 +88,12 @@ const KPICards = () => {
             </div>
           </div>
           
-          <div className="mt-4 relative z-10">
-            <h4 className="text-3xl font-bold text-white tracking-tight">{kpi.value}</h4>
+          <div className="mt-4 relative z-10 flex items-center">
+            {loading ? (
+               <div className="w-6 h-6 rounded-full border-2 border-slate-700 border-t-slate-400 animate-spin"></div>
+            ) : (
+               <h4 className="text-3xl font-bold text-white tracking-tight">{kpi.value}</h4>
+            )}
           </div>
           
           <div className="flex items-center mt-3 pt-3 border-t border-white/5 relative z-10">

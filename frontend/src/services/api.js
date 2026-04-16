@@ -19,5 +19,6 @@ export const getSupplierCostVsLeadTime = (filters = {}) => api.get('/supplier-co
 export const getTerritoryMatrix = (filters = {}) => api.get('/territory-matrix', { params: filters });
 export const getInventoryTrend = (filters = {}) => api.get('/inventory-trend', { params: filters });
 export const getStockVsSalesMatrix = (filters = {}) => api.get('/stock-vs-sales-matrix', { params: filters });
+export const getOverallKPIs = (filters = {}) => api.get('/overall-kpis', { params: filters });
 
 export default api;

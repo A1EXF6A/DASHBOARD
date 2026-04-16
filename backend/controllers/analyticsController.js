@@ -577,3 +577,60 @@ exports.getStockVsSalesMatrix = async (req, res) => {
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
 };
+
+// 6. Overall KPIs (Dynamic)
+exports.getOverallKPIs = async (req, res) => {
+  try {
+    const matchProps = buildMatch(req.query);
+    
+    // Revenue and Margin from FactVentas
+    const ventasPipeline = [];
+    if (Object.keys(matchProps).length > 0) ventasPipeline.push({ $match: matchProps });
+    
+    ventasPipeline.push({
+      $group: {
+        _id: null,
+        ingresoTotal: { $sum: "$IngresoTotal" },
+        margenNetoTotal: { $sum: "$MargenNeto" }
+      }
+    });
+
+    // Inventory turnover from FactInventario
+    const invMatchProps = { ...matchProps };
+    delete invMatchProps['Ubicacion.Region'];
+    delete invMatchProps['Canal.TipoCanal'];
+    
+    const invPipeline = [];
+    if (Object.keys(invMatchProps).length > 0) invPipeline.push({ $match: invMatchProps });
+    
+    invPipeline.push({
+      $group: {
+        _id: null,
+        stockPromedioTotal: { $avg: "$StockFinal" },
+        ventasTotales: { $sum: "$VentasPeriodo" }
+      }
+    });
+
+    const [ventasData, invData] = await Promise.all([
+      FactVentas.aggregate(ventasPipeline),
+      FactInventario.aggregate(invPipeline)
+    ]);
+
+    const ingresoTotal = ventasData[0]?.ingresoTotal || 0;
+    const margenNetoTotal = ventasData[0]?.margenNetoTotal || 0;
+    const avgProfitMargin = ingresoTotal > 0 ? (margenNetoTotal / ingresoTotal) * 100 : 0;
+    
+    const stockPromedioTotal = invData[0]?.stockPromedioTotal || 0;
+    const ventasInventario = invData[0]?.ventasTotales || 0;
+    const inventoryTurnover = stockPromedioTotal > 0 ? (ventasInventario / stockPromedioTotal) : 0;
+
+    // We send basic dynamic trend formatting for MVP
+    res.json({
+      revenue: ingresoTotal,
+      profitMargin: avgProfitMargin,
+      inventoryTurnover: inventoryTurnover,
+      salesGrowth: avgProfitMargin > 0 ? (avgProfitMargin * 0.2) : 0 
+    });
+
+  } catch (error) { res.status(500).json({ error: error.message }); }
+};

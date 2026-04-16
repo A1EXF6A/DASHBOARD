@@ -37,18 +37,18 @@ const GlobalFilters = () => {
           onChange={(e) => updateFilter('mes', e.target.value)}
         >
           <option value="All">{t('all_months')}</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
+          <option value="1">{t('jan')}</option>
+          <option value="2">{t('feb')}</option>
+          <option value="3">{t('mar')}</option>
+          <option value="4">{t('apr')}</option>
+          <option value="5">{t('may')}</option>
+          <option value="6">{t('jun')}</option>
+          <option value="7">{t('jul')}</option>
+          <option value="8">{t('aug')}</option>
+          <option value="9">{t('sep')}</option>
+          <option value="10">{t('oct')}</option>
+          <option value="11">{t('nov')}</option>
+          <option value="12">{t('dec')}</option>
         </select>
 
         {/* Channel Filter */}

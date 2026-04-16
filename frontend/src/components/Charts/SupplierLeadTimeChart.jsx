@@ -64,8 +64,12 @@ const SupplierLeadTimeChart = () => {
             <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-cyan-500 animate-spin mb-3"></div>
             <p className="text-sm text-slate-500">{t('loading')}</p>
           </div>
+        ) : (!data || data.length === 0) ? (
+          <div className="w-full h-full flex flex-col items-center justify-center px-6 text-center">
+            <p className="text-sm text-slate-500">{t('no_data')}</p>
+          </div>
         ) : (
-           <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 0, right: 10, left: 0, bottom: 20 }}>
                <CartesianGrid strokeDasharray="4 4" stroke="#ffffff" strokeOpacity={0.05} vertical={false} />
                <XAxis 

@@ -134,7 +134,8 @@ const translations = {
     inv_scat_subtitle: 'Cross-reference of Stock Levels vs Sales Volume',
     
     // Globals
-    loading: 'Loading metrics...'
+    loading: 'Loading metrics...',
+    no_data: 'No data available for the selected filters.'
   },
   es: {
     // Menú
@@ -271,7 +272,8 @@ const translations = {
     inv_scat_subtitle: 'Niveles de stock promedio cruzados contra volumen de ventas',
     
     // Globales
-    loading: 'Cargando métricas...'
+    loading: 'Cargando métricas...',
+    no_data: 'Sin datos para los filtros seleccionados.'
   }
 };
 

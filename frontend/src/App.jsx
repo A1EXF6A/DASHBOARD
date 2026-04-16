@@ -8,7 +8,11 @@ import ComboAnalysisChart from './components/Charts/ComboAnalysisChart';
 import LogisticsCostChart from './components/Charts/LogisticsCostChart';
 import SupplierLeadTimeChart from './components/Charts/SupplierLeadTimeChart';
 import TerritoryGrowthChart from './components/Charts/TerritoryGrowthChart';
+import TerritoryMatrixChart from './components/Charts/TerritoryMatrixChart';
 import ComponentUsageChart from './components/Charts/ComponentUsageChart';
+import ProfitStructureChart from './components/Charts/ProfitStructureChart';
+import LogisticsCategoryChart from './components/Charts/LogisticsCategoryChart';
+import SupplierCostScatterChart from './components/Charts/SupplierCostScatterChart';
 import { FilterProvider } from './context/FilterContext';
 import { LanguageProvider } from './context/LanguageContext';
 
@@ -19,10 +23,15 @@ function App() {
     switch(activeTab) {
       case 'Products & Profit':
         return (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
-            <ProfitabilityChart />
-            <ComboAnalysisChart />
-          </div>
+          <>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+              <ProfitabilityChart />
+              <ComboAnalysisChart />
+            </div>
+            <div className="grid grid-cols-1 gap-6 mb-6">
+              <ProfitStructureChart />
+            </div>
+          </>
         );
       case 'Inventory':
         return (
@@ -32,22 +41,37 @@ function App() {
         );
       case 'Territories':
         return (
-          <div className="grid grid-cols-1 gap-6 mb-6">
-            <TerritoryGrowthChart />
-          </div>
+          <>
+             <div className="grid grid-cols-1 gap-6 mb-6">
+                <TerritoryGrowthChart />
+             </div>
+             <div className="grid grid-cols-1 gap-6 mb-6">
+                <TerritoryMatrixChart />
+             </div>
+          </>
         );
       case 'Logistics':
          return (
-          <div className="grid grid-cols-1 gap-6 mb-6">
-            <LogisticsCostChart />
-          </div>
+          <>
+            <div className="grid grid-cols-1 gap-6 mb-6">
+              <LogisticsCostChart />
+            </div>
+            <div className="grid grid-cols-1 gap-6 mb-6">
+              <LogisticsCategoryChart />
+            </div>
+          </>
         );
       case 'Suppliers':
         return (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
-             <SupplierLeadTimeChart />
-             <ComponentUsageChart />
-          </div>
+          <>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+               <SupplierLeadTimeChart />
+               <ComponentUsageChart />
+            </div>
+            <div className="grid grid-cols-1 gap-6 mb-6">
+               <SupplierCostScatterChart />
+            </div>
+          </>
         );
       default: // 'Overview'
         return (
@@ -77,7 +101,7 @@ function App() {
                     <TerritoryGrowthChart />
                  </div>
                  <div className="lg:col-span-1">
-                    <ComponentUsageChart />
+                    <TerritoryMatrixChart />
                  </div>
               </div>
            </>

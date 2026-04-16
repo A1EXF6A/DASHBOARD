@@ -80,11 +80,34 @@ const translations = {
     terr_revenue: 'Total Revenue',
     terr_clients: 'Unique Clients',
 
+    // Territory Matrix Chart (New)
+    terr_matrix_title: 'Channel Matrix',
+    terr_matrix_subtitle: 'Participation vs Growth (Bubble: Clients)',
+    terr_part: 'Participation',
+    terr_growth: 'Growth Rate',
+
     // Component Chart
     comp_title: 'Component Distribution',
     comp_subtitle: 'Usage per Category',
     comp_total: 'Total Components',
     comp_units: 'Units Mfc',
+
+    // Profit Structure Chart (New)
+    profit_st_title: 'Financial Anatomy by Category',
+    profit_st_subtitle: 'Revenue Breakdown (Cost + Logstc + Margin + Dscnt)',
+    profit_st_production: 'Production Cost',
+    profit_st_logistic: 'Logistic Cost',
+    profit_st_discount: 'Applied Discount',
+
+    // Logistics Category Chart (New)
+    log_cat_title: 'Carrier Efficiency Across Lines',
+    log_cat_subtitle: 'Logistic Cost / Revenue Ratio (%)',
+    
+    // Supplier Scatter Chart (New)
+    sup_scat_title: 'Supplier Risk vs Profitability Matrix',
+    sup_scat_subtitle: 'Lead Time vs Base Cost (Bubble: Order Volume)',
+    sup_scat_cost: 'Unit Cost',
+    sup_scat_vol: 'Purchase Volume',
     
     // Globals
     loading: 'Loading metrics...'
@@ -170,11 +193,34 @@ const translations = {
     terr_revenue: 'Ingreso Total',
     terr_clients: 'Clientes Únicos',
 
+    // Territory Matrix Chart (New)
+    terr_matrix_title: 'Matriz de Crecimiento por Canal',
+    terr_matrix_subtitle: 'Participación vs Crecimiento (Burbuja: Clientes)',
+    terr_part: 'Participación',
+    terr_growth: 'Tasa de Crecimiento',
+
     // Gráfico de Componentes
     comp_title: 'Distribución de Componentes',
     comp_subtitle: 'Uso por categoría de producto',
     comp_total: 'Componentes Totales',
     comp_units: 'Unidades Fabricadas',
+
+    // Profit Structure Chart (New)
+    profit_st_title: 'Anatomía Financiera por Categoría',
+    profit_st_subtitle: 'Desglose de Ingresos (Costo + Logística + Margen + Descuentos)',
+    profit_st_production: 'Costo Producción',
+    profit_st_logistic: 'Costo Logístico',
+    profit_st_discount: 'Descuento Aplicado',
+
+    // Logistics Category Chart (New)
+    log_cat_title: 'Eficiencia de Transportistas por Línea',
+    log_cat_subtitle: 'Ratio de Costo Logístico / Ingreso (%)',
+    
+    // Supplier Scatter Chart (New)
+    sup_scat_title: 'Matriz de Riesgo vs Costo del Proveedor',
+    sup_scat_subtitle: 'Tiempo de Entrega vs Costo Base (Burbuja: Volumen de Compras)',
+    sup_scat_cost: 'Costo Unitario',
+    sup_scat_vol: 'Volumen Compras',
     
     // Globales
     loading: 'Cargando métricas...'

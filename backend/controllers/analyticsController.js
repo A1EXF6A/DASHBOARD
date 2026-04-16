@@ -190,6 +190,91 @@ exports.getTerritoryGrowth = async (req, res) => {
   } catch (error) { res.status(500).json({ error: error.message }); }
 };
 
+exports.getTerritoryMatrix = async (req, res) => {
+  try {
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+    
+    pipeline.push(
+      {
+        $group: {
+          _id: {
+             canal: "$Canal.TipoCanal",
+             anio: "$Tiempo.Anio"
+          },
+          ingresos: { $sum: "$IngresoTotal" },
+          clientes: { $addToSet: "$Cliente.ClienteKey" }
+        }
+      },
+      {
+        $project: {
+          ingresos: 1,
+          clientesUnicos: { $size: "$clientes" }
+        }
+      },
+      { $sort: { "_id.anio": 1 } }
+    );
+    
+    const rawData = await FactVentas.aggregate(pipeline);
+
+    // Node.js post-processing for Growth and Participation
+    // 1. Group by Canal
+    const canalData = {};
+    rawData.forEach(doc => {
+      const c = doc._id.canal || 'Unknown';
+      if (!canalData[c]) canalData[c] = [];
+      canalData[c].push({
+        anio: doc._id.anio,
+        ingresos: doc.ingresos,
+        clientesUnicos: doc.clientesUnicos
+      });
+    });
+
+    let maxAnio = 0;
+    rawData.forEach(doc => { if (doc._id.anio > maxAnio) maxAnio = doc._id.anio; });
+
+    let companyTotalSalesLatestYear = 0;
+    Object.values(canalData).forEach(yearsArray => {
+      const latest = yearsArray.find(y => y.anio === maxAnio);
+      if (latest) companyTotalSalesLatestYear += latest.ingresos;
+    });
+
+    const finalData = [];
+    Object.keys(canalData).forEach(c => {
+      const yearsArray = canalData[c];
+      const latest = yearsArray.find(y => y.anio === maxAnio) || { ingresos: 0, clientesUnicos: 0 };
+      const previous = yearsArray.find(y => y.anio === maxAnio - 1) || { ingresos: 0, clientesUnicos: 0 };
+
+      let crecimientoVentas = 0;
+      if (previous.ingresos > 0) {
+        crecimientoVentas = ((latest.ingresos - previous.ingresos) / previous.ingresos) * 100;
+      } else if (latest.ingresos > 0 && previous.ingresos === 0) {
+        crecimientoVentas = 100;
+      }
+
+      let participacion = 0;
+      if (companyTotalSalesLatestYear > 0) {
+        participacion = (latest.ingresos / companyTotalSalesLatestYear) * 100;
+      }
+
+      if (latest.ingresos > 0 || previous.ingresos > 0) {
+        finalData.push({
+          canal: c,
+          participacion: parseFloat(participacion.toFixed(2)),
+          crecimientoVentas: parseFloat(crecimientoVentas.toFixed(2)),
+          clientesUnicos: latest.clientesUnicos,
+          ingresosTotales: latest.ingresos
+        });
+      }
+    });
+
+    res.json(finalData);
+  } catch (error) { res.status(500).json({ error: error.message }); }
+};
+
 exports.getTransportCosts = async (req, res) => {
   try {
     const matchProps = buildMatch(req.query);
@@ -286,6 +371,116 @@ exports.getComponentsDistribution = async (req, res) => {
       { $sort: { totalComponentes: -1 } }
     );
     const data = await FactFabricacion.aggregate(pipeline);
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: error.message }); }
+};
+
+// 1. Profit Structure Breakdown (Stacked Bar)
+exports.getProfitStructure = async (req, res) => {
+  try {
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+
+    pipeline.push(
+      {
+        $group: {
+          _id: "$Producto.Categoria",
+          ingresoTotal: { $sum: "$IngresoTotal" },
+          costoProduccion: { $sum: "$CostoProducto" },
+          costoLogistico: { $sum: "$CostoLogistico" },
+          descuentos: { $sum: "$DescuentoAplicado" },
+          margenNeto: { $sum: "$MargenNeto" }
+        }
+      },
+      { $sort: { ingresoTotal: -1 } }
+    );
+    const data = await FactVentas.aggregate(pipeline);
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: error.message }); }
+};
+
+// 2. Logistics Cost Ratio by Category and Method (Grouped Bar)
+exports.getLogisticsByCategoryAndMethod = async (req, res) => {
+  try {
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+
+    pipeline.push(
+      {
+        $group: {
+          _id: {
+            metodoEnvio: "$MetodoEnvio.NombreMetodoEnvio",
+            categoria: "$Producto.Categoria"
+          },
+          costoLogistico: { $sum: "$CostoLogistico" },
+          ingresoTotal: { $sum: "$IngresoTotal" }
+        }
+      },
+      {
+        $project: {
+          ratio: {
+            $cond: [
+              { $eq: ["$ingresoTotal", 0] },
+              0,
+              { $multiply: [{ $divide: ["$costoLogistico", "$ingresoTotal"] }, 100] }
+            ]
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.metodoEnvio",
+          categorias: {
+            $push: {
+              k: "$_id.categoria",
+              v: "$ratio"
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          categorias: { $arrayToObject: "$categorias" }
+        }
+      }
+    );
+    const data = await FactVentas.aggregate(pipeline);
+    // Flatten result for simple Recharts map: { _id: "Cargo 5", Bikes: 3.5, Components: 2.1 }
+    const flatData = data.map(d => ({ method: d._id, ...d.categorias }));
+    res.json(flatData);
+  } catch (error) { res.status(500).json({ error: error.message }); }
+};
+
+// 3. Supplier Lead Time vs Unit Cost (Scatter Plot)
+exports.getSupplierCostVsLeadTime = async (req, res) => {
+  try {
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+
+    pipeline.push(
+      {
+        $group: {
+          _id: "$Proveedor.NombreProveedor",
+          leadTime: { $avg: "$TiempoEntregaDias" },
+          costoUnitario: { $avg: "$CostoUnitarioCompra" },
+          volumenTotal: { $sum: "$CantidadComprada" }
+        }
+      },
+      { $match: { volumenTotal: { $gt: 0 } } },
+      { $sort: { volumenTotal: -1 } },
+      { $limit: 30 } // Keep bubble chart from becoming too overloaded
+    );
+    const data = await FactAbastecimiento.aggregate(pipeline);
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
 };

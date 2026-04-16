@@ -109,6 +109,13 @@ const translations = {
     sup_scat_cost: 'Unit Cost',
     sup_scat_vol: 'Purchase Volume',
     
+    // Inventory Additional Charts
+    inv_trend_title: 'Stock vs Demand Trend',
+    inv_trend_subtitle: 'Time evolution of average stock vs sales',
+    inv_trend_period: 'Period',
+    inv_scat_title: 'Inventory Misalignment Matrix',
+    inv_scat_subtitle: 'Cross-reference of Stock Levels vs Sales Volume',
+    
     // Globals
     loading: 'Loading metrics...'
   },
@@ -221,6 +228,13 @@ const translations = {
     sup_scat_subtitle: 'Tiempo de Entrega vs Costo Base (Burbuja: Volumen de Compras)',
     sup_scat_cost: 'Costo Unitario',
     sup_scat_vol: 'Volumen Compras',
+
+    // Inventory Additional Charts
+    inv_trend_title: 'Tendencia Histórica: Stock vs Demanda',
+    inv_trend_subtitle: 'Evolución por meses del stock promedio frente a las ventas',
+    inv_trend_period: 'Período',
+    inv_scat_title: 'Matriz de Desalineación de Inventario',
+    inv_scat_subtitle: 'Niveles de stock promedio cruzados contra volumen de ventas',
     
     // Globales
     loading: 'Cargando métricas...'

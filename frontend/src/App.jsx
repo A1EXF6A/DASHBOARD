@@ -4,6 +4,8 @@ import KPICards from './components/Dashboard/KPICards';
 import GlobalFilters from './components/Filters/GlobalFilters';
 import ProfitabilityChart from './components/Charts/ProfitabilityChart';
 import InventoryDemandChart from './components/Charts/InventoryDemandChart';
+import StockVsSalesTrendChart from './components/Charts/StockVsSalesTrendChart';
+import StockVsSalesScatterChart from './components/Charts/StockVsSalesScatterChart';
 import ComboAnalysisChart from './components/Charts/ComboAnalysisChart';
 import LogisticsCostChart from './components/Charts/LogisticsCostChart';
 import SupplierLeadTimeChart from './components/Charts/SupplierLeadTimeChart';
@@ -35,9 +37,15 @@ function App() {
         );
       case 'Inventory':
         return (
-          <div className="grid grid-cols-1 gap-6 mb-6">
-            <InventoryDemandChart />
-          </div>
+          <>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+              <InventoryDemandChart />
+              <StockVsSalesScatterChart />
+            </div>
+            <div className="grid grid-cols-1 gap-6 mb-6">
+              <StockVsSalesTrendChart />
+            </div>
+          </>
         );
       case 'Territories':
         return (

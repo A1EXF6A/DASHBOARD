@@ -484,3 +484,82 @@ exports.getSupplierCostVsLeadTime = async (req, res) => {
     res.json(data);
   } catch (error) { res.status(500).json({ error: error.message }); }
 };
+
+// 4. Inventory vs Sales Trend (Over Time)
+exports.getInventoryTrend = async (req, res) => {
+  try {
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+    
+    pipeline.push(
+      {
+        $group: {
+          _id: {
+            anio: "$Tiempo.Anio",
+            mes: "$Tiempo.Mes"
+          },
+          stockPromedio: { $avg: "$StockFinal" },
+          ventasTotales: { $sum: "$VentasPeriodo" }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          anio: "$_id.anio",
+          mes: "$_id.mes",
+          stockPromedio: 1,
+          ventasTotales: 1
+        }
+      },
+      { $sort: { "anio": 1, "mes": 1 } }
+    );
+    
+    const data = await FactInventario.aggregate(pipeline);
+    
+    const formattedData = data.map(d => ({
+       periodo: `${d.anio}-${String(d.mes).padStart(2, '0')}`,
+       stockPromedio: Math.round(d.stockPromedio),
+       ventasTotales: d.ventasTotales
+    }));
+    
+    res.json(formattedData);
+  } catch (error) { res.status(500).json({ error: error.message }); }
+};
+
+// 5. Stock vs Sales Matrix (Scatter Plot)
+exports.getStockVsSalesMatrix = async (req, res) => {
+  try {
+    const matchProps = buildMatch(req.query);
+    delete matchProps['Ubicacion.Region'];
+    
+    const pipeline = [];
+    if (Object.keys(matchProps).length > 0) pipeline.push({ $match: matchProps });
+    
+    pipeline.push(
+      {
+        $group: {
+          _id: "$Producto.ProductoKey",
+          nombreProducto: { $first: "$Producto.NombreProducto" },
+          categoria: { $first: "$Producto.Categoria" },
+          stockPromedio: { $avg: "$StockFinal" },
+          ventasTotales: { $sum: "$VentasPeriodo" }
+        }
+      },
+      { $match: { $or: [{stockPromedio: { $gt: 0 }}, {ventasTotales: { $gt: 0 }}] } },
+      { $project: {
+          _id: 0,
+          id: "$_id",
+          nombreProducto: 1,
+          categoria: 1,
+          stockPromedio: { $round: ["$stockPromedio", 2] },
+          ventasTotales: 1
+      }}
+    );
+    
+    const data = await FactInventario.aggregate(pipeline);
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: error.message }); }
+};

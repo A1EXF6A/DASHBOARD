@@ -11,7 +11,9 @@ const {
   getProfitStructure,
   getLogisticsByCategoryAndMethod,
   getSupplierCostVsLeadTime,
-  getTerritoryMatrix
+  getTerritoryMatrix,
+  getInventoryTrend,
+  getStockVsSalesMatrix
 } = require('../controllers/analyticsController');
 
 router.get('/rentabilidad-producto', getProfitability);
@@ -27,5 +29,7 @@ router.get('/profit-structure', getProfitStructure);
 router.get('/logistics-by-category', getLogisticsByCategoryAndMethod);
 router.get('/supplier-cost-vs-leadtime', getSupplierCostVsLeadTime);
 router.get('/territory-matrix', getTerritoryMatrix);
+router.get('/inventory-trend', getInventoryTrend);
+router.get('/stock-vs-sales-matrix', getStockVsSalesMatrix);
 
 module.exports = router;

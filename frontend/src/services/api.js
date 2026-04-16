@@ -17,5 +17,7 @@ export const getProfitStructure = (filters = {}) => api.get('/profit-structure',
 export const getLogisticsByCategory = (filters = {}) => api.get('/logistics-by-category', { params: filters });
 export const getSupplierCostVsLeadTime = (filters = {}) => api.get('/supplier-cost-vs-leadtime', { params: filters });
 export const getTerritoryMatrix = (filters = {}) => api.get('/territory-matrix', { params: filters });
+export const getInventoryTrend = (filters = {}) => api.get('/inventory-trend', { params: filters });
+export const getStockVsSalesMatrix = (filters = {}) => api.get('/stock-vs-sales-matrix', { params: filters });
 
 export default api;
